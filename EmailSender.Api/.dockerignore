@@ -1,0 +1,14 @@
+bin/
+obj/
+.vs/
+**/*.user
+**/*.suo
+**/*.userprefs
+**/*.db
+.nuget/
+**/node_modules/
+**/dist/
+**/publish/
+**/*.log
+.env
+**/.DS_Store
