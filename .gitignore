@@ -1,0 +1,11 @@
+.vs/
+bin/
+obj/
+**/bin/
+**/obj/
+*.user
+*.db
+
+EmailSender.Api/appsettings.Development.json
+EmailSender.Api/credentials.json
+EmailSender.Api/token.json
