@@ -18,7 +18,13 @@ public static class DependencyInjection
             ?? "Host=localhost;Port=5432;Database=email_sender;Username=postgres;Password=postgres";
 
         services.AddDbContext<EmailSenderDbContext>(options =>
-            options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorCodesToAdd: null);
+    }));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEmailAttemptRepository, EmailAttemptRepository>();
