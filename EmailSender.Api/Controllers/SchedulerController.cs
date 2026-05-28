@@ -20,7 +20,7 @@ public sealed class SchedulerController(
     {
         var header = Request.Headers["X-Trigger-Source"].FirstOrDefault();
 
-        var expectedSecret = configuration["Cron:Secret"];
+        var expectedSecret = configuration["CronSecret"];
 
         if (string.IsNullOrWhiteSpace(header) ||
             header != expectedSecret)
