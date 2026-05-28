@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace EmailSender.Application.Dtos;
 
 public sealed class SendEmailRequest : IValidatableObject
 {
     [Required]
-    [EmailAddress]
-    [StringLength(320)]
-    public string RecipientEmail { get; init; } = string.Empty;
+    [MinLength(1)]
+    public List<string> RecipientEmails { get; init; } = [];
 
     [Required]
     [StringLength(200, MinimumLength = 1)]
@@ -17,11 +17,14 @@ public sealed class SendEmailRequest : IValidatableObject
     [StringLength(20000, MinimumLength = 1)]
     public string Message { get; init; } = string.Empty;
 
+    [Required]
+    public DateTimeOffset ScheduledAt { get; init; }
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (string.IsNullOrWhiteSpace(RecipientEmail))
+        if (RecipientEmails == null || RecipientEmails.Count == 0)
         {
-            yield return new ValidationResult("Recipient email is required.", [nameof(RecipientEmail)]);
+            yield return new ValidationResult("At least one recipient email is required.", new[] { nameof(RecipientEmails) });
         }
 
         if (string.IsNullOrWhiteSpace(Subject))
@@ -38,7 +41,7 @@ public sealed class SendEmailRequest : IValidatableObject
 
 public sealed record EmailAttemptDto(
     Guid Id,
-    string RecipientEmail,
+    List<string> RecipientEmails,
     string Subject,
     string Message,
     string Status,

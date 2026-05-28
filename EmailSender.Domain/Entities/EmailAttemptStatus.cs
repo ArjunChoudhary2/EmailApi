@@ -4,5 +4,6 @@ public enum EmailAttemptStatus
 {
     Sending = 0,
     Sent = 1,
-    Failed = 2
+    Failed = 2,
+    Scheduled = 3
 }

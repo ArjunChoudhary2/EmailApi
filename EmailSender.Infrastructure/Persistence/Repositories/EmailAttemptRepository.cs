@@ -15,4 +15,9 @@ public sealed class EmailAttemptRepository(EmailSenderDbContext dbContext) : IEm
             .Where(attempt => attempt.UserId == userId)
             .OrderByDescending(attempt => attempt.CreatedAt)
             .ToListAsync(cancellationToken);
+
+    public async Task<List<EmailAttempt>> ListScheduledAsync(CancellationToken cancellationToken, DateTimeOffset now) =>
+        await dbContext.EmailAttempts
+            .Where(attempt => attempt.Status.ToString() == EmailAttemptStatus.Scheduled.ToString() && attempt.ScheduledAt <= now)
+            .ToListAsync(cancellationToken);
 }

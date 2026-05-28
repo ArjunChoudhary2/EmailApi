@@ -13,4 +13,5 @@ public sealed class EmailAttempt
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? SentAt { get; set; }
     public DateTimeOffset? FailedAt { get; set; }
+    public DateTimeOffset? ScheduledAt { get; set; }
 }

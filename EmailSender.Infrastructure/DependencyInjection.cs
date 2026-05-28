@@ -1,4 +1,5 @@
 using EmailSender.Application.Interfaces;
+using EmailSender.Application.Services;
 using EmailSender.Infrastructure.Google;
 using EmailSender.Infrastructure.Persistence;
 using EmailSender.Infrastructure.Persistence.Repositories;
@@ -30,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailAttemptRepository, EmailAttemptRepository>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<EmailSenderDbContext>());
         services.AddScoped<ITokenProtector, DataProtectionTokenProtector>();
+        services.AddScoped<SchedulerService>();
         services.AddHttpClient<IGoogleOAuthService, GoogleOAuthService>();
         services.AddHttpClient<IGmailSender, GmailSender>();
 

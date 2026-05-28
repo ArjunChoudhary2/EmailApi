@@ -1,5 +1,6 @@
 using EmailSender.Application.Dtos;
 using EmailSender.Application.Interfaces;
+using EmailSender.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace EmailSender.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/emails")]
-public sealed class EmailsController(IEmailService emailService, ICurrentUserService currentUser) : ControllerBase
+public sealed class EmailsController(IEmailService emailService, ICurrentUserService currentUser, SchedulerService schedulerService) : ControllerBase
 {
     [HttpGet("history")]
     [ProducesResponseType(typeof(IReadOnlyList<EmailAttemptDto>), StatusCodes.Status200OK)]
@@ -26,4 +27,14 @@ public sealed class EmailsController(IEmailService emailService, ICurrentUserSer
         var attempt = await emailService.SendAsync(currentUser.UserId, request, cancellationToken);
         return Ok(attempt);
     }
+
+    [HttpPost("schedule")]
+    [ProducesResponseType(typeof(EmailAttemptDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> Schedule([FromBody] SendEmailRequest request, CancellationToken cancellationToken)
+    {
+        await emailService.ScheduleAsync(currentUser.UserId, request, cancellationToken);
+        return Ok();
+    }
+
 }

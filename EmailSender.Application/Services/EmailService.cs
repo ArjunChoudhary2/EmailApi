@@ -24,7 +24,7 @@ public sealed class EmailService(
         var attempt = new EmailAttempt
         {
             UserId = user.Id,
-            RecipientEmail = request.RecipientEmail.Trim(),
+            RecipientEmail = request.RecipientEmails.First().Trim(),
             Subject = request.Subject.Trim(),
             Message = request.Message.Trim(),
             Status = EmailAttemptStatus.Sending
@@ -51,6 +51,38 @@ public sealed class EmailService(
         return Map(attempt);
     }
 
+    public async Task ScheduleAsync(Guid userId, SendEmailRequest request, CancellationToken cancellationToken)
+    {
+        var user = await users.GetByIdAsync(userId, cancellationToken)
+            ?? throw new InvalidOperationException("Authenticated user was not found.");
+
+        if (string.IsNullOrWhiteSpace(user.EncryptedRefreshToken))
+        {
+            throw new InvalidOperationException("Gmail send permission is missing. Sign in with Google again and grant Gmail send access.");
+        }
+
+        foreach (var recipient in request.RecipientEmails)
+        {
+            if (string.IsNullOrWhiteSpace(recipient))
+            {
+                throw new InvalidOperationException("Recipient email cannot be empty.");
+            }
+            var attempt = new EmailAttempt
+            {
+                UserId = user.Id,
+                RecipientEmail = recipient.Trim(),
+                Subject = request.Subject.Trim(),
+                Message = request.Message.Trim(),
+                Status = EmailAttemptStatus.Scheduled,
+                ScheduledAt = request.ScheduledAt
+            };
+            await attempts.AddAsync(attempt, cancellationToken);
+        }
+        
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<EmailAttemptDto>> GetHistoryAsync(Guid userId, CancellationToken cancellationToken)
     {
         var history = await attempts.ListForUserAsync(userId, cancellationToken);
@@ -58,5 +90,5 @@ public sealed class EmailService(
     }
 
     private static EmailAttemptDto Map(EmailAttempt attempt) =>
-        new(attempt.Id, attempt.RecipientEmail, attempt.Subject, attempt.Message, attempt.Status.ToString(), attempt.CreatedAt, attempt.SentAt, attempt.FailedAt, attempt.ErrorMessage);
+        new(attempt.Id, new List<String> { attempt.RecipientEmail }, attempt.Subject, attempt.Message, attempt.Status.ToString(), attempt.CreatedAt, attempt.SentAt, attempt.FailedAt, attempt.ErrorMessage);
 }
