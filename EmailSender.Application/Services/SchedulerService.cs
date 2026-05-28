@@ -32,7 +32,7 @@ namespace EmailSender.Application.Services
                 }
                 try
                 {
-                    var refreshToken = tokenProtector.Unprotect(user.EncryptedRefreshToken);
+                    var refreshToken = user.EncryptedRefreshToken;
                     await gmailSender.SendAsync(user.Email, refreshToken, attempt.RecipientEmail, attempt.Subject, attempt.Message, cancellationToken);
                     attempt.Status = EmailAttemptStatus.Sent;
                     attempt.SentAt = DateTimeOffset.UtcNow;

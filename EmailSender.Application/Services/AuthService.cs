@@ -37,7 +37,7 @@ public sealed class AuthService(
                 Email = userInfo.Email,
                 DisplayName = userInfo.Name,
                 PictureUrl = userInfo.PictureUrl,
-                EncryptedRefreshToken = tokenResult.RefreshToken is null ? null : tokenProtector.Protect(tokenResult.RefreshToken)
+                EncryptedRefreshToken = tokenResult.RefreshToken is null ? null : tokenResult.RefreshToken
             };
 
             await users.AddAsync(user, cancellationToken);
@@ -51,7 +51,7 @@ public sealed class AuthService(
 
             if (!string.IsNullOrWhiteSpace(tokenResult.RefreshToken))
             {
-                user.EncryptedRefreshToken = tokenProtector.Protect(tokenResult.RefreshToken);
+                user.EncryptedRefreshToken = tokenResult.RefreshToken;
             }
         }
 
