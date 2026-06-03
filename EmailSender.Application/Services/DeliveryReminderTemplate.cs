@@ -64,7 +64,7 @@ public sealed class DeliveryReminderTemplate : IEmailTemplate
                 }
             },
             // Email scheduled 3 days before delivery date
-            SchedulingOffsetDays = 3,
+            SchedulingOffsetDays = 15,
             SchedulingTargetField = "deliveryDate"
         };
     }
