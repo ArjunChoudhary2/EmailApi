@@ -17,8 +17,8 @@ public sealed class SendEmailRequest : IValidatableObject
     [StringLength(20000, MinimumLength = 1)]
     public string Message { get; init; } = string.Empty;
 
-    [Required]
-    public DateTimeOffset ScheduledAt { get; init; }
+    // Optional: only required for scheduled emails
+    public DateTimeOffset? ScheduledAt { get; init; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -35,6 +35,22 @@ public sealed class SendEmailRequest : IValidatableObject
         if (string.IsNullOrWhiteSpace(Message))
         {
             yield return new ValidationResult("Message is required.", [nameof(Message)]);
+        }
+
+        // Check for duplicate emails (case-insensitive)
+        if (RecipientEmails != null && RecipientEmails.Count > 0)
+        {
+            var normalizedEmails = RecipientEmails
+                .Where(e => !string.IsNullOrWhiteSpace(e))
+                .Select(e => e.Trim().ToLowerInvariant())
+                .ToList();
+
+            var uniqueEmails = new HashSet<string>(normalizedEmails);
+
+            if (uniqueEmails.Count != normalizedEmails.Count)
+            {
+                yield return new ValidationResult("Recipient emails contain duplicates.", [nameof(RecipientEmails)]);
+            }
         }
     }
 }

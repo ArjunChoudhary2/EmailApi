@@ -34,6 +34,11 @@ public static class DependencyInjection
         services.AddScoped<SchedulerService>();
         services.AddHttpClient<IGoogleOAuthService, GoogleOAuthService>();
         services.AddHttpClient<IGmailSender, GmailSender>();
+        services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
+        
+        // Email template infrastructure
+        services.AddSingleton<ITemplateRegistry, TemplateRegistry>();
+        services.AddScoped<EmailGenerationService>();
 
         return services;
     }

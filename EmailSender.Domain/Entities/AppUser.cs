@@ -11,4 +11,5 @@ public sealed class AppUser
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     public ICollection<EmailAttempt> EmailAttempts { get; set; } = new List<EmailAttempt>();
+    public ICollection<EmailTemplate> EmailTemplates { get; set; } = [];
 }

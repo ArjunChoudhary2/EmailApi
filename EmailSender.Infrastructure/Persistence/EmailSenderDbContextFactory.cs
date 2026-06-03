@@ -8,7 +8,8 @@ public sealed class EmailSenderDbContextFactory : IDesignTimeDbContextFactory<Em
     public EmailSenderDbContext CreateDbContext(string[] args)
     {
         var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
-            ?? "Host=localhost;Port=5432;Database=email_sender;Username=postgres;Password=postgres";
+            ?? "Host=db.zmajymfilpgkocxegrfl.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=3aviihfW1O1yfYyp;SSL Mode=Require;Trust Server Certificate=true";
+        
 
         var options = new DbContextOptionsBuilder<EmailSenderDbContext>()
             .UseNpgsql(connectionString)
